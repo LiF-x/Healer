@@ -27,13 +27,13 @@ if (!isObject(LiFxHealerTrigger))
 }
 package LiFxHealer
 {
-  function LiFxHealer::setup() {       
-      LiFxHealer::Healsetup();
+  function LiFxHealer::setup() {
+      LiFx::registerCallback($LiFx::hooks::onPostInitCallbacks, Healsetup, LiFxHealer);
       LiFx::registerCallback($LiFx::hooks::onJHStartCallbacks, disableHealer, LiFxHealer);
       LiFx::registerCallback($LiFx::hooks::onJHEndCallbacks, enableHealer, LiFxHealer);
   }
   function LiFxHealer::version() {
-      return "1.0.0";
+      return "1.0.1";
   }
   function LiFxHealer::Healsetup() {
     LiFx::debugEcho("Healsetup");
@@ -79,17 +79,14 @@ package LiFxHealer
 
   function LiFxHealer::enableHealer()
   {
-    LiFx::debugEcho ("Enable healer");
     // enable the Heal() function after a delay of 30 minutes
     if(LiFxHealer.DisableDuringJH && !IsJHActive())
     {
-      LiFx::debugEcho ("Enable healer2");
       LiFxHealer.schedule(30 * 60 * 1000, "Healsetup"); // 30 minutes in milliseconds
     }
   }
   function LiFxHealer::Heal(%client)
   {
-    LiFx::debugEcho ("Heal");
     if (LiFxHealer.DisableDuringJH && IsJHActive())
     {
       LiFx::debugEcho ("Don't heal during JH");
@@ -161,9 +158,6 @@ package LiFxHealer
     } else {
       %player.client.cmSendClientMessage(2475, "you are too far away, come closer if you want to heal!");
     }
-  }
-  function LiFxheal::resetHealing(%player) {
-    %player.canHeal = true; // Reset the canHeal flag for the player
   }
 };
 activatePackage(LiFxHealer);
